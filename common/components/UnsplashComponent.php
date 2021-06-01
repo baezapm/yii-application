@@ -10,8 +10,9 @@ use yii\httpclient\Client;
 class UnsplashComponent extends Component
 {
 
-    public function get($query = null)
+    public function get($query = null, $page = null)
     {
+
 
         $dt = new \DateTime();
 
@@ -21,10 +22,13 @@ class UnsplashComponent extends Component
 
         $client = new Client(['baseUrl' => $url]);
 
-        $data = ['client_id' => $key];
-
+        $data = ['client_id' => $key, 'per_page' => 9];
         if ($query) {
             $data['query'] = $query;
+        }
+
+        if($page){
+            $data['page'] = $page;
         }
 
         try {

@@ -53,6 +53,8 @@ $this->registerJsFile(
                 'method' => 'post',
             ],
         ]) ?>
+
+        <?= Html::a('Add images', ['unsplash/index', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
     </p>
 
     <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">

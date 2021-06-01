@@ -82,7 +82,7 @@ class CollectionController extends Controller
             try {
                 Yii::$app->session->setFlash('success', "Collection created.");
 
-                return $this->redirect(['unsplash/index']);
+                return $this->redirect(['unsplash/index', 'id' => $model->id]);
             } catch (\Throwable $th) {
                 Yii::$app->session->setFlash('error', "Error creating collection.");
             }

@@ -18,9 +18,13 @@ use yii\helpers\Url;
 
 class UnsplashController extends \yii\web\Controller
 {
-    public function actionIndex(){
-      $collections = Yii::$app->user->identity->getCollections()->asArray()->all();
+    public function actionIndex($id = ''){
 
+      if(!empty($id)){
+          $collections =  $id;
+      }else{
+          $collections = Yii::$app->user->identity->getCollections()->asArray()->all();
+      }
       return $this->render('index', [
           "collections" => $collections
       ]);
@@ -29,8 +33,9 @@ class UnsplashController extends \yii\web\Controller
     public function actionSearch()
     {
         $term = Yii::$app->request->post()["search"];
+        $page = Yii::$app->request->post()["page"];
 
-        $photos = Yii::$app->get('unsplash')->get($term);
+        $photos = Yii::$app->get('unsplash')->get($term, $page);
 
         Yii::$app->response->format = Response::FORMAT_JSON;
 

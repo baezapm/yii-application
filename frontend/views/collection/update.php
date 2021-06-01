@@ -19,14 +19,21 @@ $this->params['breadcrumbs'][] = 'Update';
     ]) ?>
 
     <h3>Collection Photos</h3>
-    <div class="card-columns">
+    <div class="card-columns row">
         <?php foreach ($photos as $photo) { ?>
-            <div class="card">
+            <div class="card image-grid-item col-sm-3">
                 <img class="card-img-top img-fluid" src="<?= $photo["path"] ?>" alt="image">
-                <div class="card-block">
+                <div class="card-block card-block-btn-group">
                     <div>
-                        <?= Html::a(Yii::t('app', 'Show'), ['photo/view', "id" => $photo->id], ['class' => 'btn btn-primary']) ?>
-                        <?= Html::a(Yii::t('app', 'Delete'), ['photo/delete', "id" => $photo->id], ['class' => 'btn btn-danger']) ?>
+                        <!--<?= Html::a(Yii::t('app', 'Show'), ['photo/view', "id" => $photo->id], ['class' => 'btn btn-primary']) ?>-->
+                       <!-- <?= Html::a(Yii::t('app', 'Delete'), ['photo/delete', "id" => $photo->id], ['class' => 'btn btn-danger']) ?>-->
+                        <?= Html::a('Delete', ['photo/delete', 'id' => $model->id], [
+                            'class' => 'btn btn-danger',
+                            'data' => [
+                                'confirm' => 'Are you sure you want to delete this item?',
+                                'method' => 'post',
+                            ],
+                        ]) ?>
                     </div>
                 </div>
             </div>
