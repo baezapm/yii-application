@@ -137,3 +137,31 @@ a.desc:after {
 .nav > li > form > button.logout:focus {
     outline: none;
 }
+
+.w-100 {
+    width: 100% !important;
+    height: 75vh;
+}
+
+.image-grid-item{
+    width: 50% !important;
+}
+
+.image-grid-item img{
+    height: 216px;
+}
+
+.card-block-btn-group{
+    padding: 10px;
+    text-align: center;
+}
+
+#gallery{
+    margin-top: 50px;
+    margin-left: 0px;
+}
+
+.load-more-container{
+    display: none;
+    text-align: center;
+}

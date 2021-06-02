@@ -71,7 +71,7 @@ class Collection extends \yii\db\ActiveRecord
      */
     public function getCollectionPhotos()
     {
-        return $this->hasMany(CollectionPhotos::className(), ['collection_id' => 'id']);
+        return $this->hasMany(Photo::className(), ['collection_id' => 'id']);
     }
 
     public function afterDelete()

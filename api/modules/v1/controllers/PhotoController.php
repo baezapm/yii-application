@@ -78,7 +78,7 @@ class PhotoController extends ActiveController
         }
 
         //$collection = $photo->getCollection()->one();
-        $collection = $photo->find()->where(['photo_unsplash_id' => $id)->one();
+        $collection = $photo->find()->where(['photo_unsplash_id' => $id])->one();
 
         if ($collection->user_id !== Yii::$app->user->id) {
             throw new ForbiddenHttpException('You are unauthorized to access the requested resource.');

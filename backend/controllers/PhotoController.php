@@ -3,17 +3,23 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\Collection;
-use common\models\CollectionSearch;
 use common\models\Photo;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use DateTime;
+use Exception;
+use igogo5yo\uploadfromurl\UploadFromUrl;
+use yii\helpers\BaseFileHelper;
+use yii\helpers\VarDumper;
+use yii\web\Response;
+use ZipArchive;
 
 /**
- * CollectionController implements the CRUD actions for Collection model.
+ * PhotoController implements the CRUD actions for Photo model.
  */
-class CollectionController extends Controller
+class PhotoController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -31,54 +37,44 @@ class CollectionController extends Controller
     }
 
     /**
-     * Lists all Collection models.
+     * Lists all Photo models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new CollectionSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = new ActiveDataProvider([
+            'query' => Photo::find(),
+        ]);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
 
     /**
-     * Displays a single Collection model.
+     * Displays a single Photo model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView($id)
     {
-        $photos = Photo::find()->where(["collection_id" => $id])->all();
-
         return $this->render('view', [
             'model' => $this->findModel($id),
-            'photos' => $photos
         ]);
     }
 
     /**
-     * Creates a new Collection model.
+     * Creates a new Photo model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Collection();
-        $fields = Yii::$app->request->post();
+        $model = new Photo();
 
-        if ($model->load($fields) && $model->save()) {
-            try {
-                Yii::$app->session->setFlash('success', "Collection created.");
-
-                return $this->redirect(['unsplash/index', 'id' => $model->id]);
-            } catch (\Throwable $th) {
-                Yii::$app->session->setFlash('error', "Error creating collection.");
-            }
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('create', [
@@ -87,7 +83,7 @@ class CollectionController extends Controller
     }
 
     /**
-     * Updates an existing Collection model.
+     * Updates an existing Photo model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -107,7 +103,7 @@ class CollectionController extends Controller
     }
 
     /**
-     * Deletes an existing Collection model.
+     * Deletes an existing Photo model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -121,18 +117,54 @@ class CollectionController extends Controller
     }
 
     /**
-     * Finds the Collection model based on its primary key value.
+     * Finds the Photo model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Collection the loaded model
+     * @return Photo the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Collection::findOne($id)) !== null) {
+        if (($model = Photo::findOne($id)) !== null) {
             return $model;
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionAdd($photo_unsplash_id, $collection_id, $path)
+    {
+      Yii::$app->response->format = Response::FORMAT_JSON;
+      $transaction = Photo::getDb()->beginTransaction();
+      try {
+            //If photo is already added in the collection
+            $photo = Photo::find()->where(['photo_unsplash_id' => $photo_unsplash_id, 'collection_id' => $collection_id])->one();
+
+            if(!empty($photo->id)){
+                return [
+                    "type" => "error",
+                    "message" => "Photo already added in the collection"
+                ];
+            }
+            $newPhoto = new Photo();
+            $newPhoto->photo_unsplash_id = $photo_unsplash_id;
+            $newPhoto->collection_id = $collection_id;
+            $newPhoto->path = $path;
+            $newPhoto->save();
+
+            $transaction->commit();
+        } catch (Exception $e) {
+            $transaction->rollBack();
+
+            return [
+                "type" => "error",
+                "message" => "something happend. Photo doesn't added."
+            ];
+        }
+
+        return [
+            "type" => "success",
+            "message" => "Photo added to the collection."
+        ];
     }
 }

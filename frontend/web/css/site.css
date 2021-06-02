@@ -146,3 +146,7 @@ a.desc:after {
     display: none;
     text-align: center;
 }
+
+.btn-added{
+    display: none;
+}
