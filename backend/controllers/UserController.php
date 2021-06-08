@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use frontend\models\SignupForm;
 use Yii;
 use common\models\User;
 use yii\data\ActiveDataProvider;
@@ -64,10 +65,12 @@ class UserController extends Controller
      */
     public function actionCreate()
     {
-        $model = new User();
+        $model = new SignupForm();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post()) && $model->signup()) {
+            Yii::$app->session->setFlash('success', 'User created succesfully');
+            return $this->redirect(['create']);
+
         }
 
         return $this->render('create', [

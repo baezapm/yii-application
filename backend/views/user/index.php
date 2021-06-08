@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
             //'created_at',
             //'updated_at',
             //'verification_token',
-            'is_admin',
+            'is_admin:boolean',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],
